@@ -153,7 +153,7 @@ class Taobao:
         # self.user_info()
         self.enter_cart()
         self.submit_cart()
-        end_msctime = 1696414800000
+        end_msctime = 1696471680000
         start_msctime = int(round(time.time() * 1000))
         while start_msctime < end_msctime:
             now_msctime = int(round(time.time() * 1000))
