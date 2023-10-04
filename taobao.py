@@ -42,7 +42,7 @@ class Taobao:
     def login_taobao(self):
         # 先进行登录处理。
         driver = self.driver
-        driver.get("https://www.taobao.com")
+        driver.get("https://world.taobao.com")
         # 获取当前窗口句柄
         original_window = driver.current_window_handle
         webdriver_wait = WebDriverWait(driver, 10, 0.1)
