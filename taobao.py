@@ -103,7 +103,7 @@ class Taobao:
     def enter_cart(self):
         # 进入到购物车界面
         driver = self.driver
-        webdriver_wait = WebDriverWait(driver, 10, 0.1)
+        webdriver_wait = WebDriverWait(driver, 20, 0.1)
         cart_element = webdriver_wait.until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="J_MiniCart"]/div[1]/a')))
         if not cart_element:
@@ -123,7 +123,7 @@ class Taobao:
     def submit_cart(self):
         # 选择购物车
         driver = self.driver
-        webdriver_wait = WebDriverWait(driver, 10, 0.1)
+        webdriver_wait = WebDriverWait(driver, 20, 0.1)
         # 获取所有窗口的句柄列表
         all_window_handles = driver.window_handles
         print(f'submit_cart_all_window_handles: {all_window_handles}')
@@ -131,7 +131,7 @@ class Taobao:
         try:
             webdriver_wait.until(
                 EC.presence_of_element_located((By.XPATH, '//*[@id="J_SelectAll1"]')))
-            time.sleep(0.05)
+            time.sleep(1)
             driver.find_element(By.XPATH, '//*[@id="J_SelectAll1"]').click()
         except Exception:
             print(f'************没有找到全选按钮***************')
@@ -142,29 +142,39 @@ class Taobao:
         driver = self.driver
         webdriver_wait = WebDriverWait(driver, 10, 0.1)
         print('=========点击结算===============')
-        try:
-            webdriver_wait.until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="J_Go"]')))
-            time.sleep(0.11)
-            driver.find_element(By.XPATH, '//*[@id="J_Go"]').click()
-        except:
-            print('**********没有找到结算按钮***********')
-            return False
+        webdriver_wait.until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="J_Go"]')))
+        while True:
+            print('找结算按钮--------------------')
+            a = driver.find_element(By.XPATH, '//*[@id="J_Go"]').get_attribute('class')
+            print(f'a 的类属性为: {a}')
+            if a == 'submit-btn':
+                driver.find_element(By.XPATH, '//*[@id="J_Go"]').click()
+                break
+
         try:
             print(f'start_time========={datetime.now()}')
             WebDriverWait(driver, 20, 0.1).until(
                 EC.presence_of_element_located((By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]')))
-            time.sleep(0.01)
             driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').click()
-            check_bill = driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').text
-            while not check_bill:
-                print('**********结算按钮没有出来等待处理***********')
-                has_bill = driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').text
-                if has_bill:
+            while True:
+                print('找结账按钮----------------')
+                check_bill = driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').text
+                if check_bill == '提交订单':
                     driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').click()
                     break
         except:
             print(f'**********没有找到付款按钮: {datetime.now()}***********')
+            # 重试10次
+            count = 1
+            print(f'**********重试十次后终止***********')
+            while count <= 10:
+                print(f'**********重试第 {count} 次***********')
+                check_bill = driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').text
+                if check_bill == '提交订单':
+                    driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').click()
+                    break
+                count += 1
             return False
 
     def main(self):
