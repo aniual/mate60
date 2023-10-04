@@ -128,25 +128,44 @@ class Taobao:
         all_window_handles = driver.window_handles
         print(f'submit_cart_all_window_handles: {all_window_handles}')
         print('============选择商品============')
-        webdriver_wait.until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="J_SelectAll2"]/div/label')))
-        driver.find_element(By.XPATH, '//*[@id="J_SelectAll2"]/div/label').click()
+        try:
+            webdriver_wait.until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="J_SelectAll1"]')))
+            time.sleep(0.05)
+            driver.find_element(By.XPATH, '//*[@id="J_SelectAll1"]').click()
+        except Exception:
+            print(f'************没有找到全选按钮***************')
+            return False
 
     def submit_order(self):
         # 结账
         driver = self.driver
         webdriver_wait = WebDriverWait(driver, 10, 0.1)
-        time.sleep(0.5)
         print('=========点击结算===============')
-        webdriver_wait.until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="J_Go"]')))
-        driver.find_element(By.XPATH, '//*[@id="J_Go"]').click()
-        submit_order_element = webdriver_wait.until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]')))
-        if not submit_order_element:
-            print('============没有提交按钮=============')
-            return
-        driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').click()
+        try:
+            webdriver_wait.until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="J_Go"]')))
+            time.sleep(0.11)
+            driver.find_element(By.XPATH, '//*[@id="J_Go"]').click()
+        except:
+            print('**********没有找到结算按钮***********')
+            return False
+        try:
+            print(f'start_time========={datetime.now()}')
+            WebDriverWait(driver, 20, 0.1).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]')))
+            time.sleep(0.01)
+            driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').click()
+            check_bill = driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').text
+            while not check_bill:
+                print('**********结算按钮没有出来等待处理***********')
+                has_bill = driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').text
+                if has_bill:
+                    driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').click()
+                    break
+        except:
+            print(f'**********没有找到付款按钮: {datetime.now()}***********')
+            return False
 
     def main(self):
         self.login_taobao()
@@ -154,6 +173,7 @@ class Taobao:
         self.enter_cart()
         self.submit_cart()
         end_msctime = 1696471680000
+        print(f'开始抢购时间为========={datetime.fromtimestamp(end_msctime / 1000)}')
         start_msctime = int(round(time.time() * 1000))
         while start_msctime < end_msctime:
             now_msctime = int(round(time.time() * 1000))
