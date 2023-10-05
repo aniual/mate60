@@ -10,7 +10,8 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 class Taobao:
-    rush_buying_time = 1696500480000
+    # rush_buying_time = 1696493280000
+    rush_buying_time = 1696488780000
 
     def __init__(self):
         self.options = self.set_options()
@@ -155,7 +156,7 @@ class Taobao:
                 # 点击结算按钮
                 try:
                     while True:
-                        settlement = webdriver_wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="J_Go"]')))
+                        settlement = driver.find_element(By.XPATH, '//*[@id="J_Go"]')
                         check = settlement.get_attribute('class')
                         if check == 'submit-btn':
                             print(f'点击提交: ========={datetime.now()}')
@@ -170,8 +171,7 @@ class Taobao:
                 # 点击结账按钮。
                 try:
                     while True:
-                        sub_order = webdriver_wait.until(
-                            EC.element_to_be_clickable((By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]')))
+                        sub_order = driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]')
                         print(f'开始结账: ========={datetime.now()}')
                         sub_order.click()
                         print(f'已结账: ========={datetime.now()}')
