@@ -2,6 +2,7 @@ import time
 from datetime import datetime
 
 from selenium import webdriver
+from selenium.common import NoSuchElementException, ElementNotInteractableException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -35,8 +36,8 @@ class Taobao:
     def get_driver(self):
         # 获取全局的driver
         driver = webdriver.Chrome(options=self.options)
-        # 隐性等待最多10s，10秒不返回则报错，隐性适用于全局。
-        driver.implicitly_wait(10)
+        # 隐性等待最多60s，60秒不返回则报错，隐性适用于全局。
+        driver.implicitly_wait(60)
         return driver
 
     def login_taobao(self):
@@ -45,7 +46,7 @@ class Taobao:
         driver.get("https://world.taobao.com")
         # 获取当前窗口句柄
         original_window = driver.current_window_handle
-        webdriver_wait = WebDriverWait(driver, 10, 0.1)
+        webdriver_wait = WebDriverWait(driver, 20, 0.1)
         print(f'original_window: {original_window}')
         # 先查看点击登录按钮是否存在
         login_element = webdriver_wait.until(
@@ -140,7 +141,7 @@ class Taobao:
     def submit_order(self):
         # 结账
         driver = self.driver
-        webdriver_wait = WebDriverWait(driver, 10, 0.1)
+        webdriver_wait = WebDriverWait(driver, 20, 0.1)
         print('=========点击结算===============')
         webdriver_wait.until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="J_Go"]')))
@@ -150,10 +151,10 @@ class Taobao:
             print(f'a 的类属性为: {a}')
             if a == 'submit-btn':
                 driver.find_element(By.XPATH, '//*[@id="J_Go"]').click()
+                print(f'结算时间: ========={datetime.now()}')
                 break
 
         try:
-            print(f'start_time========={datetime.now()}')
             WebDriverWait(driver, 20, 0.1).until(
                 EC.presence_of_element_located((By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]')))
             driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').click()
@@ -162,12 +163,16 @@ class Taobao:
                 check_bill = driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').text
                 if check_bill == '提交订单':
                     driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').click()
+                    print(f'结账时间: ========={datetime.now()}')
                     break
         except:
             print(f'**********没有找到付款按钮: {datetime.now()}***********')
             # 重试10次
             count = 1
             print(f'**********重试十次后终止***********')
+            errors = [NoSuchElementException, ElementNotInteractableException]
+            WebDriverWait(driver, 20, 0.1, errors).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]')))
             while count <= 10:
                 print(f'**********重试第 {count} 次***********')
                 check_bill = driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').text
@@ -183,6 +188,7 @@ class Taobao:
         self.enter_cart()
         self.submit_cart()
         end_msctime = 1696471680000
+        # end_msctime = 1696468500000
         print(f'开始抢购时间为========={datetime.fromtimestamp(end_msctime / 1000)}')
         start_msctime = int(round(time.time() * 1000))
         while start_msctime < end_msctime:
