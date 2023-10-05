@@ -10,8 +10,9 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 class Taobao:
-    # rush_buying_time = 1696493280000
-    rush_buying_time = 1696488780000
+    # 开始抢购时间
+    # rush_buying_time = 1696489860000
+    rush_buying_time = 1696500480000
 
     def __init__(self):
         self.options = self.set_options()
@@ -156,11 +157,9 @@ class Taobao:
                 # 点击结算按钮
                 try:
                     while True:
-                        settlement = driver.find_element(By.XPATH, '//*[@id="J_Go"]')
-                        check = settlement.get_attribute('class')
-                        if check == 'submit-btn':
+                        if driver.find_element(By.LINK_TEXT, "结 算"):
                             print(f'点击提交: ========={datetime.now()}')
-                            settlement.click()
+                            driver.find_element(By.LINK_TEXT, "结 算").click()
                             print(f'已提交: ========={datetime.now()}')
                             break
                 except Exception:
@@ -171,10 +170,10 @@ class Taobao:
                 # 点击结账按钮。
                 try:
                     while True:
-                        sub_order = driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]')
-                        print(f'开始结账: ========={datetime.now()}')
-                        sub_order.click()
-                        print(f'已结账: ========={datetime.now()}')
+                        if driver.find_element(By.LINK_TEXT, "提交订单"):
+                            print(f'开始结账: ========={datetime.now()}')
+                            driver.find_element(By.LINK_TEXT, "提交订单").click()
+                            print(f'已结账: ========={datetime.now()}')
                         break
                     driver.quit()
                     break

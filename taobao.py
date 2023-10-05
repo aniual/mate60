@@ -10,6 +10,9 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 class Taobao:
+
+    # 开始抢购时间
+    # rush_buying_time = 1696500480000
     rush_buying_time = 1696500480000
 
     def __init__(self):
