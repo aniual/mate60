@@ -149,11 +149,10 @@ class Taobao:
         start_msctime = int(round(time.time() * 1000))
         while True:
             now_msctime = int(round(time.time() * 1000))
-            print(f'现在的时间为: =========={datetime.fromtimestamp(now_msctime / 1000)}')
+            print(f'现在的时间为: =========={datetime.now()}')
             if start_msctime > self.rush_buying_time:
-                print(f'开始抢购时间为: =========={datetime.fromtimestamp(now_msctime / 1000)}')
+                print(f'开始抢购时间为: =========={datetime.now()}')
                 driver = self.driver
-                webdriver_wait = WebDriverWait(driver, 30, 0.001)
                 # 点击结算按钮
                 try:
                     while True:
