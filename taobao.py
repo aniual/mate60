@@ -11,6 +11,8 @@ from selenium.webdriver.support import expected_conditions as EC
 
 
 class Taobao:
+    # rush_buying_time = 1696479060000
+    rush_buying_time = 1696488000000
 
     def __init__(self):
         self.options = self.set_options()
@@ -143,45 +145,52 @@ class Taobao:
             driver.quit()
 
     def submit_order(self):
-        # 结账
-        driver = self.driver
-        webdriver_wait = WebDriverWait(driver, 30, 0.001)
-        # 点击结算按钮
-        try:
-            settlement = webdriver_wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="J_Go"]')))
-            while True:
-                check = settlement.get_attribute('class')
-                print(f'check 的类属性为: {check}')
-                if check == 'submit-btn':
-                    settlement.click()
-                    print(f'结算时间: ========={datetime.now()}')
+        # 结账方法。
+        start_msctime = int(round(time.time() * 1000))
+        while True:
+            if start_msctime > self.rush_buying_time + 60000:
+                break
+            now_msctime = int(round(time.time() * 1000))
+            print(f'现在的时间为: =========={datetime.fromtimestamp(now_msctime / 1000)}')
+            if start_msctime > self.rush_buying_time:
+                print(f'开始抢购时间为: =========={datetime.fromtimestamp(now_msctime / 1000)}')
+                driver = self.driver
+                webdriver_wait = WebDriverWait(driver, 30, 0.001)
+                # 点击结算按钮
+                try:
+                    while True:
+                        settlement = webdriver_wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="J_Go"]')))
+                        check = settlement.get_attribute('class')
+                        if check == 'submit-btn':
+                            print(f'点击提交: ========={datetime.now()}')
+                            settlement.click()
+                            print(f'已提交: ========={datetime.now()}')
+                            break
+                except Exception:
+                    print(f'========结算按钮未显示============')
+                    driver.quit()
+
+                # 点击结账按钮。
+                try:
+                    while True:
+                        sub_order = webdriver_wait.until(
+                            EC.element_to_be_clickable((By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]')))
+                        print(f'开始结账: ========={datetime.now()}')
+                        sub_order.click()
+                        print(f'已结账: ========={datetime.now()}')
+                        break
                     break
-            print(f'submit_cart耗费时间: ========={datetime.now()}')
-        except Exception:
-            print(f'========结算按钮未显示============')
-            driver.quit()
-        try:
-            sub_order = webdriver_wait.until(
-                EC.element_to_be_clickable((By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]')))
-            sub_order.click()
-            print(f'结账时间: ========={datetime.now()}')
-        except Exception:
-            print(f'========抢购失败============')
-            driver.quit()
+                except Exception:
+                    print(f'========抢购失败============')
+                    driver.quit()
+
+            start_msctime = now_msctime
 
     def main(self):
         # self.user_info()
         self.login_taobao()
         self.enter_cart()
         self.submit_cart()
-        end_msctime = 1696479060000
-        # end_msctime = 1696468500000
-        print(f'开始抢购时间为========={datetime.fromtimestamp(end_msctime / 1000)}')
-        start_msctime = int(round(time.time() * 1000))
-        while start_msctime < end_msctime:
-            now_msctime = int(round(time.time() * 1000))
-            print(f'现在的时间是=========={datetime.fromtimestamp(now_msctime / 1000)}')
-            start_msctime = now_msctime
         self.submit_order()
 
 
