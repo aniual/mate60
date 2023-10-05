@@ -1,3 +1,4 @@
+import sys
 import time
 from datetime import datetime
 
@@ -14,6 +15,27 @@ class Taobao:
     def __init__(self):
         self.options = self.set_options()
         self.driver = self.get_driver()
+
+    # def user_info(self):
+    #     # 点击进入到用户的窗口。
+    #     driver = self.driver
+    #     webdriver_wait = WebDriverWait(driver, 10, 0.1)
+    #     user_info_element = webdriver_wait.until(
+    #         EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div[3]/div[4]/div[2]/div[1]/a[1]')))
+    #     if not user_info_element:
+    #         print('元素不存在')
+    #         return
+    #     driver.find_element(By.XPATH, '//*[@id="root"]/div[3]/div[4]/div[2]/div[1]/a[1]').click()
+    #     # 获取所有窗口的句柄列表
+    #     all_window_handles = driver.window_handles
+    #     print(f'all_window_handles: {all_window_handles}')
+    #     # 切换到新窗口的句柄
+    #     driver.switch_to.window(all_window_handles[-1])
+    #
+    #     # 查看当前的页面窗口。
+    #     now_window = driver.current_window_handle
+    #     print(f'now_window: {now_window}')
+    #     self.driver = driver
 
     def set_options(self):
         # 创建并配置Selenium选项
@@ -41,153 +63,118 @@ class Taobao:
         return driver
 
     def login_taobao(self):
+        print(f'开始时间: ========={datetime.now()}')
         # 先进行登录处理。
         driver = self.driver
         driver.get("https://world.taobao.com")
         # 获取当前窗口句柄
         original_window = driver.current_window_handle
         webdriver_wait = WebDriverWait(driver, 20, 0.1)
-        print(f'original_window: {original_window}')
+        print(f'----------original_window: {original_window}')
         # 先查看点击登录按钮是否存在
-        login_element = webdriver_wait.until(
-            EC.presence_of_element_located((By.CLASS_NAME, 'user-login-text')))
-        if not login_element:
-            print(f'未找到登录按钮')
-            return
-        # 点击登录按钮
-        driver.find_element(By.CLASS_NAME, 'user-login-text').click()
+        try:
+            login_button = webdriver_wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'user-login-button')))
+            login_button.click()
+        except Exception:
+            print('========未找到登录按钮========')
+            driver.quit()
         # 获取所有窗口的句柄列表
         all_window_handles = driver.window_handles
-        print(f'all_window_handles: {all_window_handles}')
+        print(f'----------login_all_window_handles: {all_window_handles}')
         # 切换到新窗口的句柄
         driver.switch_to.window(all_window_handles[-1])
 
         # 查看当前的页面窗口。
         now_window = driver.current_window_handle
-        print(f'now_window: {now_window}')
+        print(f'----------login_active_window: {now_window}')
 
-        # 查看iframe窗口是否存在
-        iframe_element = webdriver_wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'reg-iframe')))
-        if not iframe_element:
-            print('未找到iframe元素')
-            return
-        # 获取到iframe元素
-        iframe = driver.find_element(By.CLASS_NAME, 'reg-iframe')
-        # 跳转到ifame元素
-        driver.switch_to.frame(iframe)
+        # 查看iframe窗口是否存在存在则进行切换
+        try:
+            webdriver_wait.until(EC.frame_to_be_available_and_switch_to_it((By.CLASS_NAME, 'reg-iframe')))
+        except Exception:
+            print('========未找到iframe页面========')
+            driver.quit()
         # 点击扫码登录
-        driver.find_element(By.CLASS_NAME, 'icon-qrcode').click()
-        print('=========扫码登录成功============')
-        self.driver = driver
-
-    # def user_info(self):
-    #     # 点击进入到用户的窗口。
-    #     driver = self.driver
-    #     webdriver_wait = WebDriverWait(driver, 10, 0.1)
-    #     user_info_element = webdriver_wait.until(
-    #         EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div[3]/div[4]/div[2]/div[1]/a[1]')))
-    #     if not user_info_element:
-    #         print('元素不存在')
-    #         return
-    #     driver.find_element(By.XPATH, '//*[@id="root"]/div[3]/div[4]/div[2]/div[1]/a[1]').click()
-    #     # 获取所有窗口的句柄列表
-    #     all_window_handles = driver.window_handles
-    #     print(f'all_window_handles: {all_window_handles}')
-    #     # 切换到新窗口的句柄
-    #     driver.switch_to.window(all_window_handles[-1])
-    #
-    #     # 查看当前的页面窗口。
-    #     now_window = driver.current_window_handle
-    #     print(f'now_window: {now_window}')
-    #     self.driver = driver
+        try:
+            qrcode_element = webdriver_wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'icon-qrcode')))
+            qrcode_element.click()
+            self.driver = driver
+            print('=========扫码登录成功============')
+            print(f'login_taobao耗费时间: ========={datetime.now()}')
+        except Exception:
+            print('========未找到登录按钮============')
+            driver.quit()
 
     def enter_cart(self):
         # 进入到购物车界面
         driver = self.driver
         webdriver_wait = WebDriverWait(driver, 20, 0.1)
-        cart_element = webdriver_wait.until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="J_MiniCart"]/div[1]/a')))
-        if not cart_element:
-            print('购物车没找到')
-            return
-        driver.find_element(By.XPATH, '//*[@id="J_MiniCart"]/div[1]/a').click()
+        # 点击购物车
+        try:
+            cart_element = webdriver_wait.until(
+                EC.element_to_be_clickable((By.XPATH, '//*[@id="J_MiniCart"]/div[1]/a')))
+            cart_element.click()
+        except Exception:
+            print('========未找到登录按钮============')
+            driver.quit()
+
         # 获取所有窗口的句柄列表
         all_window_handles = driver.window_handles
-        print(f'enter_cart_all_window_handles: {all_window_handles}')
+        print(f'----------cart_all_window_handles: {all_window_handles}')
         # 切换到新窗口的句柄
         driver.switch_to.window(all_window_handles[-1])
         # 查看当前的页面窗口。
         now_window = driver.current_window_handle
-        print(f'now_window: {now_window}')
+        print(f'----------cart_active_window: {now_window}')
         self.driver = driver
+        print(f'enter_cart耗费时间: ========={datetime.now()}')
 
     def submit_cart(self):
         # 选择购物车
         driver = self.driver
         webdriver_wait = WebDriverWait(driver, 20, 0.1)
         # 获取所有窗口的句柄列表
-        all_window_handles = driver.window_handles
-        print(f'submit_cart_all_window_handles: {all_window_handles}')
         print('============选择商品============')
         try:
-            webdriver_wait.until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="J_SelectAll1"]')))
-            time.sleep(1)
-            driver.find_element(By.XPATH, '//*[@id="J_SelectAll1"]').click()
+            checkbox_element = webdriver_wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="J_SelectAll1"]')))
+            checkbox_element.click()
         except Exception:
-            print(f'************没有找到全选按钮***************')
-            return False
+            print(f'========未选中商品============')
+            driver.quit()
 
     def submit_order(self):
         # 结账
         driver = self.driver
-        webdriver_wait = WebDriverWait(driver, 20, 0.1)
-        print('=========点击结算===============')
-        webdriver_wait.until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="J_Go"]')))
-        while True:
-            print('找结算按钮--------------------')
-            a = driver.find_element(By.XPATH, '//*[@id="J_Go"]').get_attribute('class')
-            print(f'a 的类属性为: {a}')
-            if a == 'submit-btn':
-                driver.find_element(By.XPATH, '//*[@id="J_Go"]').click()
-                print(f'结算时间: ========={datetime.now()}')
-                break
-
+        webdriver_wait = WebDriverWait(driver, 30, 0.001)
+        # 点击结算按钮
         try:
-            WebDriverWait(driver, 20, 0.1).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]')))
-            driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').click()
+            settlement = webdriver_wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="J_Go"]')))
             while True:
-                print('找结账按钮----------------')
-                check_bill = driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').text
-                if check_bill == '提交订单':
-                    driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').click()
-                    print(f'结账时间: ========={datetime.now()}')
+                check = settlement.get_attribute('class')
+                print(f'check 的类属性为: {check}')
+                if check == 'submit-btn':
+                    settlement.click()
+                    print(f'结算时间: ========={datetime.now()}')
                     break
-        except:
-            print(f'**********没有找到付款按钮: {datetime.now()}***********')
-            # 重试10次
-            count = 1
-            print(f'**********重试十次后终止***********')
-            errors = [NoSuchElementException, ElementNotInteractableException]
-            WebDriverWait(driver, 20, 0.1, errors).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]')))
-            while count <= 10:
-                print(f'**********重试第 {count} 次***********')
-                check_bill = driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').text
-                if check_bill == '提交订单':
-                    driver.find_element(By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]').click()
-                    break
-                count += 1
-            return False
+            print(f'submit_cart耗费时间: ========={datetime.now()}')
+        except Exception:
+            print(f'========结算按钮未显示============')
+            driver.quit()
+        try:
+            sub_order = webdriver_wait.until(
+                EC.element_to_be_clickable((By.XPATH, '//*[@id="submitOrderPC_1"]/div/a[2]')))
+            sub_order.click()
+            print(f'结账时间: ========={datetime.now()}')
+        except Exception:
+            print(f'========抢购失败============')
+            driver.quit()
 
     def main(self):
-        self.login_taobao()
         # self.user_info()
+        self.login_taobao()
         self.enter_cart()
         self.submit_cart()
-        end_msctime = 1696471680000
+        end_msctime = 1696479060000
         # end_msctime = 1696468500000
         print(f'开始抢购时间为========={datetime.fromtimestamp(end_msctime / 1000)}')
         start_msctime = int(round(time.time() * 1000))
