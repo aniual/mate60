@@ -162,7 +162,7 @@ class Taobao:
         while True:
             print(f'现在的时间为: =========={datetime.fromtimestamp(taobao_time / 1000)}')
             # 缩短50毫秒提前进入
-            if taobao_time + 50 > self.rush_buying_time:
+            if taobao_time + 100 > self.rush_buying_time:
                 driver = self.driver
                 # 点击结算按钮
                 try:
