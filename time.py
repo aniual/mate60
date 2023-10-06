@@ -19,16 +19,9 @@ class timeTaobao(object):
         # otherStyleTime = time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
         local_time = int(round(time.time() * 1000))
         diff_time = self.timeNum - local_time
-        print(self.timeNum)
-        now_time = int(round(time.time() * 1000))+diff_time
         print(diff_time)
-        d = datetime.fromtimestamp(now_time / 1000)
-        dt = d.strftime("%Y-%m-%d %H:%M:%S.%f")
-        print(dt)
         print(datetime.now())
         return taobao_time
 
-print(datetime.now())
 t = timeTaobao()
 print(t.funcname())
-print(datetime.now())

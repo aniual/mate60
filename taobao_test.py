@@ -14,7 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 class Taobao:
     # 开始抢购时间
-    # rush_buying_time = 1696489860000
+    # rush_buying_time = 1696555680000
     rush_buying_time = 1696558080000
 
     def __init__(self):
@@ -163,16 +163,15 @@ class Taobao:
             print(f'现在的时间为: =========={datetime.fromtimestamp(taobao_time / 1000)}')
             if taobao_time > self.rush_buying_time:
                 print(f'淘宝秒杀时间为: =========={datetime.fromtimestamp(self.get_taobao_time() / 1000)}')
-                print(f'电脑系统时间为: =========={datetime.now()}')
                 driver = self.driver
                 # 点击结算按钮
                 try:
                     while True:
-                        if driver.find_element(By.LINK_TEXT, "结 算"):
+                        settlement = driver.find_element(By.LINK_TEXT, "结 算")
+                        if settlement:
                             print(f'点击提交: ========={datetime.fromtimestamp(self.get_taobao_time() / 1000)}')
-                            driver.find_element(By.LINK_TEXT, "结 算").click()
+                            settlement.click()
                             print(f'已提交: ========={datetime.fromtimestamp(self.get_taobao_time() / 1000)}')
-                            print(f'购物车提交电脑系统时间为: =========={datetime.now()}')
                             break
                 except Exception:
                     print(f'========结算按钮未显示============')
@@ -182,9 +181,10 @@ class Taobao:
                 # 点击结账按钮。
                 try:
                     while True:
-                        if driver.find_element(By.LINK_TEXT, "提交订单"):
+                        submit_order = driver.find_element(By.LINK_TEXT, "提交订单")
+                        if submit_order:
                             print(f'开始结账: ========={datetime.fromtimestamp(self.get_taobao_time() / 1000)}')
-                            driver.find_element(By.LINK_TEXT, "提交订单").click()
+                            submit_order.click()
                             print(f'已结账: ========={datetime.fromtimestamp(self.get_taobao_time() / 1000)}')
                             print(f'结账电脑系统时间为: =========={datetime.now()}')
                         break
