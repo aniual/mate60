@@ -14,8 +14,8 @@ from selenium.webdriver.support import expected_conditions as EC
 
 class Taobao:
     # 开始抢购时间
-    # rush_buying_time = 1696555680000
-    rush_buying_time = 1696558080000
+    # rush_buying_time = 1696586880000
+    rush_buying_time = 1696560660000
 
     def __init__(self):
         self.options = self.set_options()
@@ -161,18 +161,25 @@ class Taobao:
         # 结账方法。
         while True:
             print(f'现在的时间为: =========={datetime.fromtimestamp(taobao_time / 1000)}')
-            if taobao_time > self.rush_buying_time:
-                print(f'开始秒杀时间为: =========={datetime.now()}')
+            # 缩短50毫秒提前进入
+            if taobao_time + 50 > self.rush_buying_time:
+                print(f'开始秒杀时间为: =========={datetime.fromtimestamp(taobao_time / 1000)}')
                 driver = self.driver
                 # 点击结算按钮
                 try:
+                    count = 1
                     while True:
+                        if count > 30:
+                            raise Exception('Error')
                         settlement = driver.find_element(By.LINK_TEXT, "结 算")
-                        if settlement:
+                        settlement_class = settlement.get_attribute('class')
+                        if settlement and settlement_class == 'submit-btn':
                             print(f'点击提交: ========={datetime.now()}')
                             settlement.click()
                             print(f'已提交: ========={datetime.now()}')
                             break
+                        time.sleep(0.1)
+                        count += 1
                 except Exception:
                     print(f'========结算按钮未显示============')
                     driver.quit()
@@ -180,13 +187,18 @@ class Taobao:
 
                 # 点击结账按钮。
                 try:
+                    count = 1
                     while True:
+                        if count > 30:
+                            raise Exception('Error')
                         submit_order = driver.find_element(By.LINK_TEXT, "提交订单")
                         if submit_order:
                             print(f'开始结账: ========={datetime.now()}')
                             submit_order.click()
                             print(f'已结账: ========={datetime.now()}')
                             break
+                        count += 1
+                        time.sleep(0.1)
                     driver.quit()
                     break
                 except Exception:
