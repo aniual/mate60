@@ -192,7 +192,6 @@ class Taobao:
                     break
                 except Exception:
                     print(f'========抢购失败============')
-                    driver.quit()
                     break
 
             taobao_time = self.get_taobao_time()
