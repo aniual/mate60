@@ -13,7 +13,7 @@ class Taobao:
 
     # 开始抢购时间
     # rush_buying_time = 1696500480000
-    rush_buying_time = 1696500480000
+    rush_buying_time = 1696586880000
 
     def __init__(self):
         self.options = self.set_options()
