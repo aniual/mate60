@@ -163,7 +163,6 @@ class Taobao:
             print(f'现在的时间为: =========={datetime.fromtimestamp(taobao_time / 1000)}')
             # 缩短50毫秒提前进入
             if taobao_time + 50 > self.rush_buying_time:
-                print(f'开始秒杀时间为: =========={datetime.fromtimestamp(taobao_time / 1000)}')
                 driver = self.driver
                 # 点击结算按钮
                 try:
@@ -174,9 +173,9 @@ class Taobao:
                         settlement = driver.find_element(By.LINK_TEXT, "结 算")
                         settlement_class = settlement.get_attribute('class')
                         if settlement and settlement_class == 'submit-btn':
-                            print(f'点击提交: ========={datetime.now()}')
+                            print(f'点击提交: ========={datetime.fromtimestamp(taobao_time / 1000)}')
                             settlement.click()
-                            print(f'已提交: ========={datetime.now()}')
+                            print(f'已提交: ========={datetime.fromtimestamp(taobao_time / 1000)}')
                             break
                         time.sleep(0.1)
                         count += 1
@@ -193,9 +192,8 @@ class Taobao:
                             raise Exception('Error')
                         submit_order = driver.find_element(By.LINK_TEXT, "提交订单")
                         if submit_order:
-                            print(f'开始结账: ========={datetime.now()}')
                             submit_order.click()
-                            print(f'已结账: ========={datetime.now()}')
+                            print(f'已结账: ========={datetime.fromtimestamp(taobao_time / 1000)}')
                             break
                         count += 1
                         time.sleep(0.1)
