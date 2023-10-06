@@ -25,3 +25,5 @@ class timeTaobao(object):
 
 t = timeTaobao()
 print(t.funcname())
+print(f'开始秒杀时间为: =========={datetime.now()}')
+

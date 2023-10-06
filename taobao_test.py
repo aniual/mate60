@@ -162,16 +162,16 @@ class Taobao:
         while True:
             print(f'现在的时间为: =========={datetime.fromtimestamp(taobao_time / 1000)}')
             if taobao_time > self.rush_buying_time:
-                print(f'淘宝秒杀时间为: =========={datetime.fromtimestamp(self.get_taobao_time() / 1000)}')
+                print(f'开始秒杀时间为: =========={datetime.now()}')
                 driver = self.driver
                 # 点击结算按钮
                 try:
                     while True:
                         settlement = driver.find_element(By.LINK_TEXT, "结 算")
                         if settlement:
-                            print(f'点击提交: ========={datetime.fromtimestamp(self.get_taobao_time() / 1000)}')
+                            print(f'点击提交: ========={datetime.now()}')
                             settlement.click()
-                            print(f'已提交: ========={datetime.fromtimestamp(self.get_taobao_time() / 1000)}')
+                            print(f'已提交: ========={datetime.now()}')
                             break
                 except Exception:
                     print(f'========结算按钮未显示============')
@@ -183,10 +183,9 @@ class Taobao:
                     while True:
                         submit_order = driver.find_element(By.LINK_TEXT, "提交订单")
                         if submit_order:
-                            print(f'开始结账: ========={datetime.fromtimestamp(self.get_taobao_time() / 1000)}')
+                            print(f'开始结账: ========={datetime.now()}')
                             submit_order.click()
-                            print(f'已结账: ========={datetime.fromtimestamp(self.get_taobao_time() / 1000)}')
-                            print(f'结账电脑系统时间为: =========={datetime.now()}')
+                            print(f'已结账: ========={datetime.now()}')
                         break
                     driver.quit()
                     break
