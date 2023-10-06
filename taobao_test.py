@@ -186,7 +186,7 @@ class Taobao:
                             print(f'开始结账: ========={datetime.now()}')
                             submit_order.click()
                             print(f'已结账: ========={datetime.now()}')
-                        break
+                            break
                     driver.quit()
                     break
                 except Exception:
