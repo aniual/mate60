@@ -1,5 +1,8 @@
 from datetime import datetime
 
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
 import time
 
 import requests
@@ -17,17 +20,25 @@ class timeTaobao(object):
         return timeNum
 
     def funcname(self):
-        initital_time = int(time.time() * 1000)
-        # 结账方法。
+        options = Options()
+        options.add_experimental_option('detach', True)
+
+        driver = webdriver.Chrome(options=options)
+        driver.get("https://www.baidu.com")
         while True:
-            diff_time = self.rush_buying_time - initital_time
-            print(diff_time)
-            if diff_time > 0 and diff_time < 10000:
-                time.sleep(1)
-                print(f'时间为: =========={datetime.fromtimestamp(self.taobao_time() / 1000)}')
-            time.sleep(1)
-            initital_time = int(time.time() * 1000)
-            print(f'现在的时间为: =========={datetime.fromtimestamp(initital_time / 1000)}')
+            time.sleep(5)
+            driver.refresh()
+        # initital_time = int(time.time() * 1000)
+        # # 结账方法。
+        # while True:
+        #     diff_time = self.rush_buying_time - initital_time
+        #     print(diff_time)
+        #     if diff_time > 0 and diff_time < 10000:
+        #         time.sleep(1)
+        #         print(f'时间为: =========={datetime.fromtimestamp(self.taobao_time() / 1000)}')
+        #     time.sleep(1)
+        #     initital_time = int(time.time() * 1000)
+        #     print(f'现在的时间为: =========={datetime.fromtimestamp(initital_time / 1000)}')
 
 
 t = timeTaobao()
