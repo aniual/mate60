@@ -182,7 +182,7 @@ class Taobao:
                 # taobao_time = self.get_taobao_time()
                 taobao_time = int(time.time() * 1000)
                 print(f'截止时间:================ {datetime.now()}')
-                if taobao_time + 200 > self.rush_buying_time:
+                if taobao_time + 100 > self.rush_buying_time:
                     driver = self.driver
                     driver.refresh()
                     print(f'第1次刷新======================={datetime.now()}')
