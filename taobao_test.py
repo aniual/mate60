@@ -184,7 +184,7 @@ class Taobao:
                 # taobao_time = self.get_taobao_time()
                 taobao_time = int(time.time() * 1000)
                 print(f'截止时间:================ {datetime.now()}')
-                if taobao_time + 1000 > self.rush_buying_time:
+                if taobao_time + 500 > self.rush_buying_time:
                     driver = self.driver
                     driver.refresh()
                     # 点击结账按钮。
@@ -199,6 +199,7 @@ class Taobao:
                                 submit_order.click()
                                 print(f'拍下商品时间: ========={datetime.now()}')
                                 break
+                            driver.refresh()
                             count += 1
                             time.sleep(0.1)
                     except Exception:
