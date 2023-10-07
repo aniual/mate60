@@ -15,7 +15,7 @@ from selenium.webdriver.support import expected_conditions as EC
 class Taobao:
     # 开始抢购时间
     # rush_buying_time = 1696560660000
-    rush_buying_time = 1696673280000
+    rush_buying_time = 1696644480000
     r1 = requests.get(url='http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp',
                       headers={
                           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 UBrowser/6.2.4098.3 Safari/537.36'})
@@ -162,62 +162,55 @@ class Taobao:
         return timeNum
 
     def submit_order(self):
-        # 结账方法。
-        # 初始时间
         initital_time = int(time.time() * 1000)
+        # 结账方法。
         while True:
-            # 当前时间
-            current_time = int(time.time() * 1000)
-            diff_time = current_time - initital_time
-            if diff_time >= 20000:
-                taobao_time = self.timeNum
-                local_time = int(time.time() * 1000)
-                if local_time - taobao_time > 0:
-                    current_time = local_time - (local_time - taobao_time)
-                else:
-                    current_time = local_time + (local_time - taobao_time)
-                initital_time = int(time.time() * 1000)
-            if current_time > self.rush_buying_time:
-                # 缩短50毫秒提前进入
-                driver = self.driver
-                # 点击结算按钮
-                try:
-                    count = 1
-                    while True:
-                        if count > 30:
-                            raise Exception('Error')
-                        settlement = driver.find_element(By.LINK_TEXT, "结 算")
-                        settlement_class = settlement.get_attribute('class')
-                        if settlement and settlement_class == 'submit-btn':
-                            print(f'点击提交: ========={datetime.fromtimestamp(current_time / 1000)}')
-                            settlement.click()
-                            print(f'已提交: ========={datetime.fromtimestamp(current_time / 1000)}')
-                            break
-                        time.sleep(0.1)
-                        count += 1
-                except Exception:
-                    print(f'========结算按钮未显示============')
-                    driver.quit()
-                    break
+            diff_time = self.rush_buying_time - initital_time
+            if diff_time < 10000:
+                taobao_time = self.get_taobao_time()
+                if taobao_time > self.rush_buying_time:
+                    driver = self.driver
+                    # 点击结算按钮
+                    try:
+                        count = 1
+                        while True:
+                            if count > 30:
+                                raise Exception('Error')
+                            settlement = driver.find_element(By.LINK_TEXT, "结 算")
+                            settlement_class = settlement.get_attribute('class')
+                            if settlement and settlement_class == 'submit-btn':
+                                print(f'点击提交: ========={datetime.fromtimestamp(taobao_time / 1000)}')
+                                settlement.click()
+                                print(f'已提交: ========={datetime.fromtimestamp(taobao_time / 1000)}')
+                                break
+                            time.sleep(0.1)
+                            count += 1
+                    except Exception:
+                        print(f'========结算按钮未显示============')
+                        driver.quit()
+                        break
 
-                # 点击结账按钮。
-                try:
-                    count = 1
-                    while True:
-                        if count > 30:
-                            raise Exception('Error')
-                        submit_order = driver.find_element(By.LINK_TEXT, "提交订单")
-                        if submit_order:
-                            submit_order.click()
-                            print(f'已结账: ========={datetime.fromtimestamp(current_time / 1000)}')
-                            break
-                        count += 1
-                        time.sleep(0.1)
-                    driver.quit()
-                    break
-                except Exception:
-                    print(f'========抢购失败============')
-                    break
+                    # 点击结账按钮。
+                    try:
+                        count = 1
+                        while True:
+                            if count > 30:
+                                raise Exception('Error')
+                            submit_order = driver.find_element(By.LINK_TEXT, "提交订单")
+                            if submit_order:
+                                submit_order.click()
+                                print(f'已结账: ========={datetime.fromtimestamp(taobao_time / 1000)}')
+                                break
+                            count += 1
+                            time.sleep(0.1)
+                        driver.quit()
+                        break
+                    except Exception:
+                        print(f'========抢购失败============')
+                        break
+            time.sleep(1)
+            initital_time = int(time.time() * 1000)
+            print(f'现在的时间为: =========={datetime.fromtimestamp(initital_time / 1000)}')
 
     def main(self):
         # self.user_info()
