@@ -147,6 +147,8 @@ class Taobao:
             print(f'========未选中商品============')
             driver.quit()
 
+        time.sleep(3)
+
         # 点击结算按钮
         try:
             count = 1
@@ -184,18 +186,17 @@ class Taobao:
                 # taobao_time = self.get_taobao_time()
                 taobao_time = int(time.time() * 1000)
                 print(f'截止时间:================ {datetime.now()}')
-                if taobao_time + 500 > self.rush_buying_time:
+                if taobao_time + 200 > self.rush_buying_time:
                     driver = self.driver
                     driver.refresh()
                     # 点击结账按钮。
                     try:
                         count = 1
                         while True:
-                            if count > 30:
+                            if count > 10:
                                 raise Exception('Error')
                             submit_order = driver.find_element(By.LINK_TEXT, "提交订单")
                             if submit_order:
-                                # print(f'拍下商品时间: ========={datetime.fromtimestamp(self.get_taobao_time() / 1000)}')
                                 submit_order.click()
                                 print(f'拍下商品时间: ========={datetime.now()}')
                                 break
