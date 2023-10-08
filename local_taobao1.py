@@ -15,7 +15,7 @@ from selenium.webdriver.support import expected_conditions as EC
 class Taobao:
     # 开始抢购时间
     # rush_buying_time = 1696560660000
-    rush_buying_time = 1696730880000
+    rush_buying_time = 1696759680000
 
     def __init__(self):
         self.options = self.set_options()
@@ -159,7 +159,7 @@ class Taobao:
                     # print(f'点击提交时间: ========={datetime.fromtimestamp(self.get_taobao_time() / 1000)}')
                     settlement.click()
                     break
-                time.sleep(0.1)
+                time.sleep(0.01)
                 count += 1
         except Exception:
             print(f'========结算按钮未显示============')
@@ -201,7 +201,7 @@ class Taobao:
                             driver.refresh()
                             count += 1
                             print(f'第{count}次刷新====================={datetime.now()}')
-                            time.sleep(0.1)
+                            time.sleep(0.01)
                     except Exception:
                         driver.quit()
                         print(f'========抢购失败============')
