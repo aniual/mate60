@@ -214,7 +214,6 @@ class Taobao:
                         payment_page = webdriver_wait.until(
                             EC.element_to_be_clickable((By.XPATH, '//*[@id="channels"]/div/li/div')))
                         print(payment_page.text)
-                        # print(f'付款页面时间: ========={datetime.fromtimestamp(self.get_taobao_time() / 1000)}')
                         print(f'付款页面时间: ========={datetime.now()}')
                         driver.quit()
                         break
