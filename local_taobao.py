@@ -208,7 +208,10 @@ class Taobao:
 
                     # 进入到付款的界面
                     try:
+                        count = 1
                         while True:
+                            if count > 20:
+                                raise Exception('Error')
                             webdriver_wait = WebDriverWait(driver, 20, 0.1)
                             payment_page = webdriver_wait.until(
                                 EC.element_to_be_clickable((By.XPATH, '//*[@id="channels"]/div/li/div')))
@@ -218,6 +221,8 @@ class Taobao:
                                 driver.quit()
                                 break
                             driver.refresh()
+                            count += 1
+                            print(f'第{count}次刷新支付页面====================={datetime.now()}')
                             time.sleep(0.1)
                     except Exception:
                         print(f'========付款页面未显示============')

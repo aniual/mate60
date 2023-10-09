@@ -186,15 +186,14 @@ class Taobao:
                 # taobao_time = self.get_taobao_time()
                 taobao_time = int(time.time() * 1000)
                 print(f'截止时间:================ {datetime.now()}')
-                print(f'截止时间:================ {datetime.now()}')
-                if taobao_time + 10 > self.rush_buying_time:
+                if taobao_time > self.rush_buying_time:
                     driver = self.driver
                     driver.refresh()
                     # 点击结账按钮。
                     try:
                         count = 1
                         while True:
-                            if count > 10:
+                            if count > 20:
                                 raise Exception('Error')
                             submit_order = driver.find_element(By.LINK_TEXT, "提交订单")
                             if submit_order:
@@ -212,17 +211,21 @@ class Taobao:
 
                     # 进入到付款的界面
                     try:
+                        count = 1
                         while True:
+                            if count > 20:
+                                raise Exception('Error')
                             webdriver_wait = WebDriverWait(driver, 20, 0.1)
                             payment_page = webdriver_wait.until(
                                 EC.element_to_be_clickable((By.XPATH, '//*[@id="channels"]/div/li/div')))
-                            if not payment_page:
+                            if payment_page:
                                 print(payment_page.text)
                                 print(f'付款页面时间: ========={datetime.now()}')
-                                print(f'淘宝付款页面时间: ========={datetime.fromtimestamp(self.get_taobao_time() / 1000)}')
                                 driver.quit()
                                 break
                             driver.refresh()
+                            count += 1
+                            print(f'第{count}次刷新支付页面====================={datetime.now()}')
                             time.sleep(0.1)
                     except Exception:
                         print(f'========付款页面未显示============')
