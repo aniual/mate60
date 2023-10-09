@@ -186,8 +186,6 @@ class Taobao:
                 print(f'截止时间:================ {datetime.now()}')
                 if taobao_time > self.rush_buying_time:
                     driver = self.driver
-                    driver.refresh()
-                    print(f'第1次刷新======================={datetime.now()}')
                     # 点击结账按钮。
                     try:
                         count = 1
@@ -200,8 +198,8 @@ class Taobao:
                                 print(f'拍下商品时间: ========={datetime.now()}')
                                 break
                             driver.refresh()
-                            count += 1
                             print(f'第{count}次刷新====================={datetime.now()}')
+                            count += 1
                             time.sleep(0.1)
                     except Exception:
                         # driver.quit()
