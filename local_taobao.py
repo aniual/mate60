@@ -15,7 +15,7 @@ from selenium.webdriver.support import expected_conditions as EC
 class Taobao:
     # 开始抢购时间
     # rush_buying_time = 1696560660000
-    rush_buying_time = 1696817280000
+    rush_buying_time = 1696818180000
 
     def __init__(self):
         self.options = self.set_options()
@@ -215,6 +215,7 @@ class Taobao:
                             EC.element_to_be_clickable((By.XPATH, '//*[@id="channels"]/div/li/div')))
                         print(payment_page.text)
                         print(f'付款页面时间: ========={datetime.now()}')
+                        print(f'淘宝付款页面时间: ========={datetime.fromtimestamp(self.get_taobao_time() / 1000)}')
                         driver.quit()
                         break
                     except Exception:
