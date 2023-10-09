@@ -202,7 +202,7 @@ class Taobao:
                             driver.refresh()
                             count += 1
                             print(f'第{count}次刷新====================={datetime.now()}')
-                            time.sleep(0.01)
+                            time.sleep(0.1)
                     except Exception:
                         # driver.quit()
                         print(f'========抢购失败============')
