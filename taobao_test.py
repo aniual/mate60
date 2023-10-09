@@ -15,7 +15,7 @@ from selenium.webdriver.support import expected_conditions as EC
 class Taobao:
     # 开始抢购时间
     # rush_buying_time = 1696560660000
-    rush_buying_time = 1696817280000
+    rush_buying_time = 1696818180000
 
     def __init__(self):
         self.options = self.set_options()
@@ -186,7 +186,8 @@ class Taobao:
                 # taobao_time = self.get_taobao_time()
                 taobao_time = int(time.time() * 1000)
                 print(f'截止时间:================ {datetime.now()}')
-                if taobao_time + 200 > self.rush_buying_time:
+                print(f'截止时间:================ {datetime.now()}')
+                if taobao_time + 10 > self.rush_buying_time:
                     driver = self.driver
                     driver.refresh()
                     # 点击结账按钮。
@@ -202,25 +203,33 @@ class Taobao:
                                 break
                             driver.refresh()
                             count += 1
+                            print(f'第{count}次刷新====================={datetime.now()}')
                             time.sleep(0.1)
                     except Exception:
-                        driver.quit()
+                        # driver.quit()
                         print(f'========抢购失败============')
                         break
 
                     # 进入到付款的界面
                     try:
-                        webdriver_wait = WebDriverWait(driver, 20, 0.1)
-                        payment_page = webdriver_wait.until(
-                            EC.element_to_be_clickable((By.XPATH, '//*[@id="channels"]/div/li/div')))
-                        print(payment_page.text)
-                        print(f'付款页面时间: ========={datetime.now()}')
-                        driver.quit()
-                        break
+                        while True:
+                            webdriver_wait = WebDriverWait(driver, 20, 0.1)
+                            payment_page = webdriver_wait.until(
+                                EC.element_to_be_clickable((By.XPATH, '//*[@id="channels"]/div/li/div')))
+                            if not payment_page:
+                                print(payment_page.text)
+                                print(f'付款页面时间: ========={datetime.now()}')
+                                print(f'淘宝付款页面时间: ========={datetime.fromtimestamp(self.get_taobao_time() / 1000)}')
+                                driver.quit()
+                                break
+                            driver.refresh()
+                            time.sleep(0.1)
                     except Exception:
                         print(f'========付款页面未显示============')
                         driver.quit()
                         break
+                    print(f'===========抢购完成===============')
+                    break
             else:
                 time.sleep(1)
                 initital_time = int(time.time() * 1000)
